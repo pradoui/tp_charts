@@ -8,7 +8,8 @@ A beautiful animated line chart widget for Flutter with customizable styling, sm
 - ✨ **Smooth Animations**: Beautiful entrance animations with customizable duration and curves
 - 🖱️ **Interactive**: Hover effects with tooltips showing data values
 - 📱 **Responsive**: Adapts to different screen sizes and orientations
-- 🎛️ **Filter Buttons**: Optional filter buttons for data selection
+- 📅 **DateTime Support**: Automatic filtering by date periods (Today, This Week, This Year, All Period)
+- 🎛️ **Filter Buttons**: Built-in filter buttons for easy data selection
 - 🌐 **Cross-platform**: Works on all Flutter platforms
 
 ## Installation
@@ -22,23 +23,37 @@ dependencies:
 
 ## Usage
 
-### Basic Line Chart
+### DateTime-based Chart (Recommended)
 
 ```dart
 import 'package:tp_charts/tp_charts.dart';
 
+CustomLineChart(
+  dates: [
+    DateTime(2024, 1, 1),
+    DateTime(2024, 2, 1),
+    DateTime(2024, 3, 1),
+    DateTime(2024, 4, 1),
+  ],
+  yValues: [100.0, 150.0, 120.0, 180.0],
+)
+```
+
+### String-based Chart (Legacy)
+
+```dart
 CustomLineChart(
   xValues: ['Jan', 'Feb', 'Mar', 'Apr'],
   yValues: [100.0, 150.0, 120.0, 180.0],
 )
 ```
 
-### Customized Chart
+### Customized Chart with Filters
 
 ```dart
 CustomLineChart(
-  xValues: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-  yValues: [420.0, 580.0, 610.0, 720.0, 850.0],
+  dates: myDateTimeList,
+  yValues: myValuesList,
   
   // Styling
   color: Colors.blue,
@@ -47,6 +62,13 @@ CustomLineChart(
   
   // Animation
   animationDuration: Duration(milliseconds: 1500),
+  
+  // Filtering
+  showFilterButtons: true,
+  selectedFilter: FilterType.thisWeek,
+  onFilterChanged: (filter) {
+    print('Filter changed to: $filter');
+  },
   
   // Grid customization
   gridLineColor: Colors.grey,
@@ -60,16 +82,10 @@ CustomLineChart(
     fontSize: 14,
   ),
   tooltipBoxColor: Colors.black87,
-  
-  // Label customization
-  labelTextStyle: TextStyle(
-    color: Colors.grey,
-    fontSize: 12,
-  ),
 )
 ```
 
-### With Filter Buttons
+### Standalone Filter Buttons
 
 ```dart
 ChartFilterButton(
@@ -89,18 +105,29 @@ ChartFilterButton(
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `xValues` | `List<String>` | **required** | Labels for the X-axis |
+| `dates` | `List<DateTime>?` | `null` | DateTime objects for X-axis (preferred for automatic filtering) |
+| `xValues` | `List<String>?` | `null` | String labels for X-axis (alternative to dates) |
 | `yValues` | `List<double>` | **required** | Numeric values for the Y-axis |
 | `color` | `Color` | `Color(0xFF3B82F6)` | Primary color for line and area |
 | `lineWidth` | `double` | `3.0` | Width of the line stroke |
 | `pointRadius` | `double` | `7.0` | Radius of hover points |
 | `animationDuration` | `Duration` | `Duration(milliseconds: 1500)` | Duration of entrance animation |
+| `showFilterButtons` | `bool` | `true` | Whether to show built-in filter buttons |
+| `selectedFilter` | `FilterType` | `FilterType.allPeriod` | Currently selected filter |
+| `onFilterChanged` | `Function(FilterType)?` | `null` | Callback when filter changes |
 | `gridLineColor` | `Color` | `Colors.grey` | Color of grid lines |
 | `gridLineOpacity` | `double` | `0.05` | Opacity of grid lines (0.0 to 1.0) |
 | `gridCount` | `int` | `5` | Number of horizontal grid lines |
 | `tooltipTextStyle` | `TextStyle` | - | Style for tooltip text |
 | `labelTextStyle` | `TextStyle` | - | Style for axis labels |
 | `tooltipBoxColor` | `Color` | `Colors.black` | Background color of tooltip |
+
+### FilterType Enum
+
+- `FilterType.today` - Shows data from today only
+- `FilterType.thisWeek` - Shows data from the last 7 days
+- `FilterType.thisYear` - Shows data from the current year
+- `FilterType.allPeriod` - Shows all available data
 
 ### ChartFilterButton
 
@@ -116,7 +143,7 @@ ChartFilterButton(
 | `animationDuration` | `Duration` | `Duration(milliseconds: 200)` | Animation duration |
 | `borderRadius` | `double` | `16.0` | Border radius of button |
 
-## Example
+## Complete Example
 
 Check out the complete example in the `/example` folder:
 
@@ -124,18 +151,40 @@ Check out the complete example in the `/example` folder:
 import 'package:flutter/material.dart';
 import 'package:tp_charts/tp_charts.dart';
 
-class MyChart extends StatelessWidget {
+class MyChart extends StatefulWidget {
+  @override
+  _MyChartState createState() => _MyChartState();
+}
+
+class _MyChartState extends State<MyChart> {
+  FilterType selectedFilter = FilterType.allPeriod;
+
   @override
   Widget build(BuildContext context) {
+    final dates = [
+      DateTime(2024, 8, 1),
+      DateTime(2024, 8, 5),
+      DateTime(2024, 8, 10),
+      DateTime(2024, 8, 15),
+      DateTime(2024, 8, 20),
+    ];
+    
+    final values = [1200.0, 1900.0, 1600.0, 2100.0, 2400.0];
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: CustomLineChart(
-          xValues: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-          yNames: ['January', 'February', 'March', 'April', 'May'],
-          values: [1200.0, 1900.0, 1600.0, 2100.0, 2400.0],
+          dates: dates,
+          yValues: values,
           color: Colors.blue,
           lineWidth: 3.0,
+          selectedFilter: selectedFilter,
+          onFilterChanged: (filter) {
+            setState(() {
+              selectedFilter = filter;
+            });
+          },
         ),
       ),
     );
