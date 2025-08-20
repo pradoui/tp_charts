@@ -1,0 +1,22 @@
+name: tp_charts_example
+description: Example app for tp_charts package
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: '^3.8.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  tp_charts:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

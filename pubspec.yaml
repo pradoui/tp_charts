@@ -1,0 +1,23 @@
+name: tp_charts
+description: A beautiful animated line chart widget for Flutter with customizable styling, smooth animations, and interactive hover effects.
+version: 1.0.0
+homepage: https://github.com/yourusername/tp_charts
+repository: https://github.com/yourusername/tp_charts
+issue_tracker: https://github.com/yourusername/tp_charts/issues
+documentation: https://github.com/yourusername/tp_charts#readme
+
+environment:
+  sdk: ^3.8.1
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
