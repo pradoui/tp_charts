@@ -1,3 +1,35 @@
+## 1.0.1
+
+### Enhanced Grid and Single Point Support
+
+#### ✨ New Features
+- **Dynamic Grid Count**: Automatically adjust grid lines based on data size
+- **Single Data Point Support**: Charts now work with just 1 data point
+- **Flexible Grid Control**: User-defined min/max grid line limits
+
+#### 🔧 New Parameters
+- `autoGridCount`: Enable automatic grid adjustment (default: false)
+- `maxGridCount`: Maximum number of grid lines when using auto mode (default: 10)
+- `minGridCount`: Minimum number of grid lines when using auto mode (default: 3)
+
+#### 🎯 Improvements
+- Better handling of edge cases (single point, zero range)
+- Improved grid rendering for small datasets
+- Enhanced visual representation for single data points
+- More robust chart rendering across different data sizes
+
+#### 🐛 Bug Fixes
+- Fixed assertion that required minimum 2 data points
+- Fixed grid calculation for single value datasets
+- Improved chart drawing for edge cases
+
+#### 📚 Documentation
+- Updated README with new grid parameters
+- Added examples for single point charts
+- Enhanced parameter documentation
+
+---
+
 ## 1.0.0
 
 ### Initial Release

@@ -85,6 +85,20 @@ class ExampleHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  _buildExampleCard(
+                    context,
+                    'Dynamic Grid & Single Point',
+                    'Charts with adaptive grid and single data point support',
+                    Icons.grid_on,
+                    Colors.orange,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DynamicGridExample(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -455,6 +469,157 @@ class _DateTimeChartExampleState extends State<DateTimeChartExample> {
               '• Este Ano: Dados do ano atual\n'
               '• Todo o Período: Todos os dados disponíveis',
               style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Dynamic Grid Example
+class DynamicGridExample extends StatefulWidget {
+  const DynamicGridExample({super.key});
+
+  @override
+  State<DynamicGridExample> createState() => _DynamicGridExampleState();
+}
+
+class _DynamicGridExampleState extends State<DynamicGridExample> {
+  int dataPointCount = 1;
+  bool autoGrid = true;
+
+  List<DateTime> _generateDates(int count) {
+    final now = DateTime.now();
+    return List.generate(
+      count,
+      (index) => now.subtract(Duration(days: count - 1 - index)),
+    );
+  }
+
+  List<double> _generateValues(int count) {
+    return List.generate(
+      count,
+      (index) => 100 + (index * 50) + (index % 3) * 20,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dates = _generateDates(dataPointCount);
+    final values = _generateValues(dataPointCount);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dynamic Grid Example'),
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Grid Dinâmico e Suporte a Dados Únicos',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Teste o comportamento do gráfico com diferentes quantidades de dados.',
+              style: TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+
+            // Controls
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Pontos de dados: '),
+                        Expanded(
+                          child: Slider(
+                            value: dataPointCount.toDouble(),
+                            min: 1,
+                            max: 20,
+                            divisions: 19,
+                            label: dataPointCount.toString(),
+                            onChanged: (value) {
+                              setState(() {
+                                dataPointCount = value.toInt();
+                              });
+                            },
+                          ),
+                        ),
+                        Text('$dataPointCount'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('Grid automático: '),
+                        Switch(
+                          value: autoGrid,
+                          onChanged: (value) {
+                            setState(() {
+                              autoGrid = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Chart
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(24),
+                child: CustomLineChart(
+                  key: ValueKey('$dataPointCount-$autoGrid'),
+                  dates: dates,
+                  yValues: values,
+                  color: Colors.orange,
+                  showFilterButtons: false,
+                  autoGridCount: autoGrid,
+                  minGridCount: 2,
+                  maxGridCount: 8,
+                  gridCount: 4, // Used when autoGrid is false
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Info
+            Text(
+              autoGrid
+                  ? 'Grid automático: ${dataPointCount == 1 ? '2 linhas (mínimo)' : '${((dataPointCount / 2.5).round().clamp(2, 8))} linhas (baseado nos dados)'}'
+                  : 'Grid fixo: 4 linhas',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              dataPointCount == 1
+                  ? 'Ponto único: Exibido como círculo no centro do gráfico'
+                  : 'Múltiplos pontos: Linha suave conectando os pontos',
+              style: const TextStyle(color: Colors.grey),
             ),
           ],
         ),

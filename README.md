@@ -70,10 +70,14 @@ CustomLineChart(
     print('Filter changed to: $filter');
   },
   
+  // Dynamic Grid (adapts to data size)
+  autoGridCount: true,
+  minGridCount: 3,
+  maxGridCount: 10,
+  
   // Grid customization
   gridLineColor: Colors.grey,
   gridLineOpacity: 0.1,
-  gridCount: 5,
   
   // Tooltip customization
   tooltipTextStyle: TextStyle(
@@ -82,6 +86,21 @@ CustomLineChart(
     fontSize: 14,
   ),
   tooltipBoxColor: Colors.black87,
+)
+```
+
+### Chart with Single Data Point
+
+```dart
+CustomLineChart(
+  dates: [DateTime.now()],
+  yValues: [150.0],
+  
+  // Grid will automatically adapt for single point
+  autoGridCount: true,
+  minGridCount: 3,
+  
+  color: Colors.green,
 )
 ```
 
@@ -117,7 +136,10 @@ ChartFilterButton(
 | `onFilterChanged` | `Function(FilterType)?` | `null` | Callback when filter changes |
 | `gridLineColor` | `Color` | `Colors.grey` | Color of grid lines |
 | `gridLineOpacity` | `double` | `0.05` | Opacity of grid lines (0.0 to 1.0) |
-| `gridCount` | `int` | `5` | Number of horizontal grid lines |
+| `gridCount` | `int` | `5` | Number of horizontal grid lines (when autoGridCount is false) |
+| `autoGridCount` | `bool` | `false` | Whether to automatically adjust grid count based on data |
+| `maxGridCount` | `int` | `10` | Maximum grid lines when using auto grid count |
+| `minGridCount` | `int` | `3` | Minimum grid lines when using auto grid count |
 | `tooltipTextStyle` | `TextStyle` | - | Style for tooltip text |
 | `labelTextStyle` | `TextStyle` | - | Style for axis labels |
 | `tooltipBoxColor` | `Color` | `Colors.black` | Background color of tooltip |

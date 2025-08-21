@@ -50,6 +50,15 @@ class CustomLineChart extends StatefulWidget {
   /// Number of horizontal grid lines
   final int gridCount;
 
+  /// Whether to automatically adjust grid count based on data
+  final bool autoGridCount;
+
+  /// Maximum number of grid lines when using auto grid count
+  final int maxGridCount;
+
+  /// Minimum number of grid lines when using auto grid count
+  final int minGridCount;
+
   // Point customization (for hover effect)
   /// Color of the point border when hovering
   final Color pointBorderColor;
@@ -110,6 +119,9 @@ class CustomLineChart extends StatefulWidget {
     this.gridLineOpacity = 0.05,
     this.gridLineWidth = 1,
     this.gridCount = 5,
+    this.autoGridCount = false,
+    this.maxGridCount = 10,
+    this.minGridCount = 3,
     // Point customization defaults
     this.pointBorderColor = Colors.white,
     this.pointBorderWidth = 3,
@@ -130,7 +142,7 @@ class CustomLineChart extends StatefulWidget {
     this.showFilterButtons = true,
     this.selectedFilter = FilterType.allPeriod,
     this.onFilterChanged,
-  }) : assert(yValues.length > 1, 'At least 2 data points are required'),
+  }) : assert(yValues.length >= 1, 'At least 1 data point is required'),
        assert(
          dates != null || xValues != null,
          'Either dates or xValues must be provided',
@@ -147,7 +159,12 @@ class CustomLineChart extends StatefulWidget {
          gridLineOpacity >= 0.0 && gridLineOpacity <= 1.0,
          'gridLineOpacity must be between 0.0 and 1.0',
        ),
-       assert(gridCount > 0, 'gridCount must be greater than 0');
+       assert(gridCount > 0, 'gridCount must be greater than 0'),
+       assert(
+         maxGridCount >= minGridCount,
+         'maxGridCount must be >= minGridCount',
+       ),
+       assert(minGridCount > 0, 'minGridCount must be greater than 0');
 
   @override
   State<CustomLineChart> createState() => _CustomLineChartState();
@@ -166,6 +183,24 @@ class _CustomLineChartState extends State<CustomLineChart>
     _currentFilter = widget.selectedFilter;
     _setupAnimation();
     _startAnimation();
+  }
+
+  /// Calculate dynamic grid count based on data length
+  int _calculateGridCount(List<double> data) {
+    if (!widget.autoGridCount) {
+      return widget.gridCount;
+    }
+
+    // For single item, use minimum grid count
+    if (data.length == 1) {
+      return widget.minGridCount;
+    }
+
+    // Calculate optimal grid count based on data points
+    // Use roughly 1 grid line per 2-3 data points, but respect min/max
+    int optimalCount = (data.length / 2.5).round();
+
+    return optimalCount.clamp(widget.minGridCount, widget.maxGridCount);
   }
 
   @override
@@ -499,7 +534,7 @@ class _CustomLineChartState extends State<CustomLineChart>
                         dashColor: widget.dashColor,
                         dashWidth: widget.dashWidth,
                         labelHighlightColor: widget.labelHighlightColor,
-                        gridCount: widget.gridCount,
+                        gridCount: _calculateGridCount(yValues),
                       ),
                       child: Container(),
                     );
@@ -593,8 +628,35 @@ class _LineChartPainter extends CustomPainter {
     double maxY,
     double yRange,
   ) {
-    for (int i = 1; i < gridCount; i++) {
-      double t = i / (gridCount - 1);
+    // Handle edge case where we have only one value or no range
+    if (yRange == 0) {
+      // Draw a single horizontal line in the middle
+      double y = chartHeight / 2;
+      final gridPaint = Paint()
+        ..color = gridLineColor.withAlpha((gridLineOpacity * 255).round())
+        ..strokeWidth = gridLineWidth;
+
+      canvas.drawLine(
+        Offset(leftPadding, y),
+        Offset(leftPadding + chartWidth, y),
+        gridPaint,
+      );
+
+      final label = TextPainter(
+        text: TextSpan(text: minY.toStringAsFixed(0), style: labelTextStyle),
+        textDirection: ui.TextDirection.ltr,
+      )..layout();
+
+      label.paint(
+        canvas,
+        Offset(leftPadding - label.width - 8, y - label.height / 2),
+      );
+      return;
+    }
+
+    // Regular grid drawing
+    for (int i = 0; i < gridCount; i++) {
+      double t = gridCount > 1 ? i / (gridCount - 1) : 0;
       double value = minY + (maxY - minY) * t;
       double y = chartHeight - ((value - minY) / yRange * chartHeight);
 
@@ -644,11 +706,36 @@ class _LineChartPainter extends CustomPainter {
     double chartHeight,
     double chartWidth,
   ) {
-    if (points.length < 2) return;
+    if (points.isEmpty) return;
+
+    // Handle single point case
+    if (points.length == 1) {
+      _drawSinglePoint(canvas, points[0]);
+      return;
+    }
 
     final controls = _getCubicControlPoints(points);
     _drawArea(canvas, points, controls, chartHeight, chartWidth);
     _drawLine(canvas, points, controls);
+  }
+
+  void _drawSinglePoint(Canvas canvas, Offset point) {
+    // Draw a circle for single point
+    final pointPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(point, pointRadius, pointPaint);
+
+    // Draw border if specified
+    if (pointBorderWidth > 0) {
+      final borderPaint = Paint()
+        ..color = pointBorderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = pointBorderWidth;
+
+      canvas.drawCircle(point, pointRadius, borderPaint);
+    }
   }
 
   List<Offset> _getCubicControlPoints(List<Offset> pts) {
