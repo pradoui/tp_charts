@@ -1,3 +1,43 @@
+## 1.0.4
+
+### New Widget: HotChart - Gauge Style Chart
+
+#### 🎯 New Features
+- **HotChart Widget**: Added new gauge/speedometer style chart widget
+- **Percentage-Based Status**: Status determination based on percentage ranges (0-30% = Excellent, 30-60% = Regular, 60%+ = Poor)
+- **Customizable Status Colors**: Full control over colors for each status level (excellent, regular, poor)
+- **Customizable Status Text**: Configurable text labels for each status level
+- **Smooth Animations**: Beautiful entrance animations with customizable duration
+- **Flexible Sizing**: Configurable chart size with responsive design
+
+#### 🎨 Styling Options
+- **Custom Colors**: Individual colors for excellent, regular, and poor status levels
+- **Track Customization**: Configurable track color and width
+- **Text Styling**: Customizable value and status text styles
+- **Animation Control**: Optional animations with configurable duration
+
+#### 📊 HotChart Usage
+```dart
+HotChart(
+  currentValue: 45.0,
+  minValue: 0.0,
+  maxValue: 100.0,
+  size: 200,
+  showStatusText: true,
+  excellentStatusText: 'Ótimo',
+  regularStatusText: 'Regular',
+  poorStatusText: 'Ruim',
+)
+```
+
+#### 🔧 Technical Implementation
+- Custom painter for gauge drawing with LinearGradient support
+- Percentage-based status calculation
+- Smooth color transitions between status levels
+- Responsive text positioning and sizing
+
+---
+
 ## 1.0.3
 
 ### Critical Bug Fix for Single Data Point Charts

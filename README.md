@@ -1,9 +1,10 @@
 # TP Charts
 
-A beautiful animated line chart widget for Flutter with customizable styling, smooth animations, and interactive hover effects.
+A collection of beautiful animated chart widgets for Flutter with customizable styling, smooth animations, and interactive effects.
 
 ## Features
 
+- 📊 **Multiple Chart Types**: Line charts and gauge-style charts (HotChart)
 - 🎨 **Customizable Design**: Extensive styling options for colors, gradients, and typography
 - ✨ **Smooth Animations**: Beautiful entrance animations with customizable duration and curves
 - 🖱️ **Interactive**: Hover effects with tooltips showing data values
@@ -18,10 +19,34 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tp_charts: ^1.0.0
+  tp_charts: ^1.0.4
 ```
 
 ## Usage
+
+### HotChart - Gauge Style Chart
+
+The HotChart displays values in a speedometer/gauge style with status indication based on percentage ranges.
+
+```dart
+import 'package:tp_charts/tp_charts.dart';
+
+HotChart(
+  currentValue: 45.0,
+  minValue: 0.0,
+  maxValue: 100.0,
+  size: 200,
+  showStatusText: true,
+  excellentStatusText: 'Ótimo',    // 0-30%
+  regularStatusText: 'Regular',    // 30-60%
+  poorStatusText: 'Ruim',          // 60%+
+  excellentColor: Colors.green,
+  regularColor: Colors.yellow,
+  poorColor: Colors.red,
+)
+```
+
+### CustomLineChart
 
 ### DateTime-based Chart (Recommended)
 
@@ -151,6 +176,28 @@ ChartFilterButton(
 | `tooltipTextStyle` | `TextStyle` | - | Style for tooltip text |
 | `labelTextStyle` | `TextStyle` | - | Style for axis labels |
 | `tooltipBoxColor` | `Color` | `Colors.black` | Background color of tooltip |
+
+### HotChart
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `currentValue` | `double` | **required** | The current value to display |
+| `minValue` | `double` | `0.0` | Minimum value for the gauge scale |
+| `maxValue` | `double` | `10.0` | Maximum value for the gauge scale |
+| `size` | `double` | `200.0` | Width and height of the chart (always square) |
+| `excellentStatusText` | `String` | `'Excellent'` | Text for excellent status (0-30%) |
+| `regularStatusText` | `String` | `'Regular'` | Text for regular status (30-60%) |
+| `poorStatusText` | `String` | `'Poor'` | Text for poor status (60%+) |
+| `excellentColor` | `Color` | `Colors.green` | Color for excellent status |
+| `regularColor` | `Color` | `Colors.yellow` | Color for regular status |
+| `poorColor` | `Color` | `Colors.red` | Color for poor status |
+| `trackColor` | `Color` | `Colors.grey[300]` | Color of the background track |
+| `trackWidth` | `double` | `20.0` | Width of the gauge track |
+| `showStatusText` | `bool` | `true` | Whether to show status text below value |
+| `animate` | `bool` | `true` | Whether to animate chart entrance |
+| `animationDuration` | `Duration` | `Duration(milliseconds: 1000)` | Duration of entrance animation |
+| `valueTextStyle` | `TextStyle` | - | Style for the center value text |
+| `statusTextStyle` | `TextStyle` | - | Style for the status text |
 
 ### FilterType Enum
 

@@ -102,6 +102,20 @@ class ExampleHomePage extends StatelessWidget {
                   const SizedBox(height: 16),
                   _buildExampleCard(
                     context,
+                    'HotChart - Gauge Style',
+                    'Gauge-style charts for displaying values with status indication',
+                    Icons.speed,
+                    Colors.teal,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HotChartExample(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildExampleCard(
+                    context,
                     'Large Dataset with Smart Labels',
                     'Charts with 100+ data points and intelligent label display',
                     Icons.data_usage,
@@ -840,6 +854,228 @@ class _LargeDatasetExampleState extends State<LargeDatasetExample> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class HotChartExample extends StatefulWidget {
+  const HotChartExample({super.key});
+
+  @override
+  State<HotChartExample> createState() => _HotChartExampleState();
+}
+
+class _HotChartExampleState extends State<HotChartExample> {
+  double currentValue = 4.85;
+  double minValue = 0.0;
+  double maxValue = 10.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('HotChart Example'),
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'HotChart - Gauge Style Chart',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Gauge-style charts for displaying values with status indication',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 32),
+
+            // Main HotChart
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                children: [
+                  HotChart(
+                    currentValue: currentValue,
+                    minValue: minValue,
+                    maxValue: maxValue,
+                    size: 250,
+                    showStatusText: true,
+                    excellentStatusText: 'Ótimo',
+                    regularStatusText: 'Regular',
+                    poorStatusText: 'Ruim',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Controls
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Controls',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Current Value Slider
+                  Text(
+                    'Current Value: ${currentValue.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Slider(
+                    value: currentValue,
+                    min: minValue,
+                    max: maxValue,
+                    divisions: 100,
+                    activeColor: Colors.teal,
+                    onChanged: (value) {
+                      setState(() {
+                        currentValue = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Multiple HotCharts Examples
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Multiple HotCharts',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Row of smaller charts
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    alignment: WrapAlignment.spaceEvenly,
+                    children: [
+                      _buildSmallChart('Performance', 8.2, 7.0, 0, 10),
+                      _buildSmallChart('Quality', 6.5, 8.0, 0, 10),
+                      _buildSmallChart('Speed', 4.1, 5.0, 0, 10),
+                      _buildSmallChart('Efficiency', 9.1, 8.5, 0, 10),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Info
+            Text(
+              'O HotChart exibe valores em estilo velocímetro com indicação de status baseada em porcentagem: 0-30% = Ótimo (verde), 30-60% = Regular (amarelo), 60%+ = Ruim (vermelho).',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSmallChart(
+    String title,
+    double current,
+    double ideal,
+    double min,
+    double max,
+  ) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        HotChart(
+          currentValue: current,
+          minValue: min,
+          maxValue: max,
+          size: 120,
+          showStatusText: false,
+          trackWidth: 12,
+          valueTextStyle: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }
