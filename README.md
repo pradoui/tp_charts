@@ -89,18 +89,23 @@ CustomLineChart(
 )
 ```
 
-### Chart with Single Data Point
+### Chart with Large Dataset
 
 ```dart
 CustomLineChart(
-  dates: [DateTime.now()],
-  yValues: [150.0],
+  dates: myLargeDateTimeList, // e.g., 100+ items
+  yValues: myLargeValuesList,
   
-  // Grid will automatically adapt for single point
+  // Handle large datasets with smart labeling
+  maxXLabels: 6, // Show only 6 X-axis labels max
+  rotateLabels: true, // Rotate labels to save space
+  labelRotation: 0.785398, // 45 degrees
+  
+  // Dynamic grid
   autoGridCount: true,
-  minGridCount: 3,
+  maxGridCount: 8,
   
-  color: Colors.green,
+  color: Colors.purple,
 )
 ```
 
@@ -140,6 +145,9 @@ ChartFilterButton(
 | `autoGridCount` | `bool` | `false` | Whether to automatically adjust grid count based on data |
 | `maxGridCount` | `int` | `10` | Maximum grid lines when using auto grid count |
 | `minGridCount` | `int` | `3` | Minimum grid lines when using auto grid count |
+| `maxXLabels` | `int` | `8` | Maximum number of X-axis labels to display |
+| `rotateLabels` | `bool` | `false` | Whether to rotate X-axis labels when they overlap |
+| `labelRotation` | `double` | `0.785398` | Rotation angle for labels in radians (45° default) |
 | `tooltipTextStyle` | `TextStyle` | - | Style for tooltip text |
 | `labelTextStyle` | `TextStyle` | - | Style for axis labels |
 | `tooltipBoxColor` | `Color` | `Colors.black` | Background color of tooltip |

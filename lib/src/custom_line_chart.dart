@@ -91,6 +91,16 @@ class CustomLineChart extends StatefulWidget {
   /// Color of the label when highlighted
   final Color labelHighlightColor;
 
+  // X-axis label customization
+  /// Maximum number of X-axis labels to show
+  final int maxXLabels;
+
+  /// Whether to rotate X-axis labels when they overlap
+  final bool rotateLabels;
+
+  /// Rotation angle for X-axis labels (in radians)
+  final double labelRotation;
+
   /// Whether to show filter buttons
   final bool showFilterButtons;
 
@@ -138,6 +148,10 @@ class CustomLineChart extends StatefulWidget {
     this.dashColor = Colors.black,
     this.dashWidth = 0.8,
     this.labelHighlightColor = Colors.black,
+    // X-axis label customization defaults
+    this.maxXLabels = 8,
+    this.rotateLabels = false,
+    this.labelRotation = 0.785398, // 45 degrees in radians
     // Filter options
     this.showFilterButtons = true,
     this.selectedFilter = FilterType.allPeriod,
@@ -164,7 +178,8 @@ class CustomLineChart extends StatefulWidget {
          maxGridCount >= minGridCount,
          'maxGridCount must be >= minGridCount',
        ),
-       assert(minGridCount > 0, 'minGridCount must be greater than 0');
+       assert(minGridCount > 0, 'minGridCount must be greater than 0'),
+       assert(maxXLabels > 0, 'maxXLabels must be greater than 0');
 
   @override
   State<CustomLineChart> createState() => _CustomLineChartState();
@@ -535,6 +550,9 @@ class _CustomLineChartState extends State<CustomLineChart>
                         dashWidth: widget.dashWidth,
                         labelHighlightColor: widget.labelHighlightColor,
                         gridCount: _calculateGridCount(yValues),
+                        maxXLabels: widget.maxXLabels,
+                        rotateLabels: widget.rotateLabels,
+                        labelRotation: widget.labelRotation,
                       ),
                       child: Container(),
                     );
@@ -574,6 +592,9 @@ class _LineChartPainter extends CustomPainter {
   final double dashWidth;
   final Color labelHighlightColor;
   final int gridCount;
+  final int maxXLabels;
+  final bool rotateLabels;
+  final double labelRotation;
 
   _LineChartPainter({
     required this.data,
@@ -600,6 +621,9 @@ class _LineChartPainter extends CustomPainter {
     required this.dashWidth,
     required this.labelHighlightColor,
     required this.gridCount,
+    required this.maxXLabels,
+    required this.rotateLabels,
+    required this.labelRotation,
   });
 
   @override
@@ -610,10 +634,17 @@ class _LineChartPainter extends CustomPainter {
     final double minY = data.reduce(min);
     final double maxY = data.reduce(max);
     final double yRange = (maxY - minY) == 0 ? 1 : (maxY - minY);
-    final double dx = chartWidth / (data.length - 1);
+    final double dx = data.length <= 1 ? 0 : chartWidth / (data.length - 1);
 
     _drawGrid(canvas, leftPadding, chartHeight, chartWidth, minY, maxY, yRange);
-    final points = _calculatePoints(leftPadding, chartHeight, dx, minY, yRange);
+    final points = _calculatePoints(
+      leftPadding,
+      chartHeight,
+      dx,
+      minY,
+      yRange,
+      chartWidth,
+    );
     _drawChart(canvas, points, chartHeight, chartWidth);
     _drawTooltip(canvas, points, chartHeight);
     _drawLabels(canvas, points, chartHeight);
@@ -688,10 +719,18 @@ class _LineChartPainter extends CustomPainter {
     double dx,
     double minY,
     double yRange,
+    double chartWidth,
   ) {
     List<Offset> points = [];
     for (int i = 0; i < data.length; i++) {
-      double x = leftPadding + i * dx;
+      double x;
+      if (data.length == 1) {
+        // Center the single point
+        x = leftPadding + chartWidth * 0.5; // Center in chart area
+      } else {
+        x = leftPadding + i * dx;
+      }
+
       double baseY = chartHeight;
       double targetY = chartHeight - ((data[i] - minY) / yRange * chartHeight);
       double animatedY = baseY - (baseY - targetY) * animationValue;
@@ -924,11 +963,21 @@ class _LineChartPainter extends CustomPainter {
   }
 
   void _drawLabels(Canvas canvas, List<Offset> points, double chartHeight) {
-    for (int i = 0; i < labels.length; i++) {
+    if (labels.isEmpty || points.isEmpty) return;
+
+    // Calculate which labels to show
+    List<int> indicesToShow = _calculateLabelIndices();
+
+    for (int index in indicesToShow) {
+      if (index >= labels.length || index >= points.length) continue;
+
+      final isHighlighted = index == highlightIndex;
+      final labelText = labels[index];
+
       final labelPainter = TextPainter(
         text: TextSpan(
-          text: labels[i],
-          style: i == highlightIndex
+          text: labelText,
+          style: isHighlighted
               ? labelTextStyle.copyWith(
                   color: labelHighlightColor,
                   fontWeight: FontWeight.bold,
@@ -938,10 +987,65 @@ class _LineChartPainter extends CustomPainter {
         textDirection: ui.TextDirection.ltr,
       )..layout();
 
-      double lx = points[i].dx - labelPainter.width / 2;
+      double lx = points[index].dx;
       double ly = chartHeight + 8;
-      labelPainter.paint(canvas, Offset(lx, ly));
+
+      if (rotateLabels && labelRotation != 0) {
+        // Save canvas state for rotation
+        canvas.save();
+
+        // Move to label position
+        canvas.translate(lx, ly + labelPainter.height);
+
+        // Rotate
+        canvas.rotate(labelRotation);
+
+        // Draw rotated label
+        labelPainter.paint(canvas, Offset(-labelPainter.width / 2, 0));
+
+        // Restore canvas state
+        canvas.restore();
+      } else {
+        // Draw normal horizontal label
+        lx = lx - labelPainter.width / 2;
+        labelPainter.paint(canvas, Offset(lx, ly));
+      }
     }
+  }
+
+  /// Calculate which label indices to show based on available space
+  List<int> _calculateLabelIndices() {
+    if (labels.length <= maxXLabels) {
+      // If we have few labels, show all
+      return List.generate(labels.length, (index) => index);
+    }
+
+    List<int> indices = [];
+
+    // Always show first and last
+    indices.add(0);
+    if (labels.length > 1) {
+      indices.add(labels.length - 1);
+    }
+
+    // Calculate step to distribute remaining labels evenly
+    int remainingSlots = maxXLabels - 2; // minus first and last
+    if (remainingSlots > 0) {
+      double step = (labels.length - 1) / (remainingSlots + 1);
+
+      for (int i = 1; i <= remainingSlots; i++) {
+        int index = (step * i).round();
+        if (index > 0 &&
+            index < labels.length - 1 &&
+            !indices.contains(index)) {
+          indices.add(index);
+        }
+      }
+    }
+
+    // Sort indices
+    indices.sort();
+    return indices;
   }
 
   @override

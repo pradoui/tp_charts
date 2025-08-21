@@ -99,6 +99,20 @@ class ExampleHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  _buildExampleCard(
+                    context,
+                    'Large Dataset with Smart Labels',
+                    'Charts with 100+ data points and intelligent label display',
+                    Icons.data_usage,
+                    Colors.purple,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LargeDatasetExample(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -619,6 +633,208 @@ class _DynamicGridExampleState extends State<DynamicGridExample> {
               dataPointCount == 1
                   ? 'Ponto único: Exibido como círculo no centro do gráfico'
                   : 'Múltiplos pontos: Linha suave conectando os pontos',
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Large Dataset Example
+class LargeDatasetExample extends StatefulWidget {
+  const LargeDatasetExample({super.key});
+
+  @override
+  State<LargeDatasetExample> createState() => _LargeDatasetExampleState();
+}
+
+class _LargeDatasetExampleState extends State<LargeDatasetExample> {
+  int dataPoints = 50;
+  bool useSmartLabels = true;
+  bool rotateLabels = false;
+  int maxLabels = 8;
+
+  List<DateTime> _generateDates(int count) {
+    final now = DateTime.now();
+    return List.generate(count, (index) {
+      return now.subtract(Duration(days: count - index));
+    });
+  }
+
+  List<double> _generateValues(int count) {
+    final random = DateTime.now().millisecondsSinceEpoch;
+    return List.generate(count, (index) {
+      // Simulate realistic data with trend and variation
+      double trend = index * 2.0; // Upward trend
+      double variation =
+          ((random + index * 17) % 100 - 50) * 0.5; // Random variation
+      return (100 + trend + variation).clamp(50.0, 500.0);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dates = _generateDates(dataPoints);
+    final values = _generateValues(dataPoints);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Large Dataset Example'),
+        backgroundColor: Colors.purple,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Dataset Grande com Labels Inteligentes',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Demonstra como o widget lida com grandes volumes de dados (${dataPoints} pontos)',
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+
+            // Controls
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Controles:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Data points slider
+                    Text('Pontos de dados: $dataPoints'),
+                    Slider(
+                      value: dataPoints.toDouble(),
+                      min: 10,
+                      max: 200,
+                      divisions: 19,
+                      onChanged: (value) {
+                        setState(() {
+                          dataPoints = value.round();
+                        });
+                      },
+                    ),
+
+                    // Max labels slider
+                    Text('Máximo de labels: $maxLabels'),
+                    Slider(
+                      value: maxLabels.toDouble(),
+                      min: 3,
+                      max: 15,
+                      divisions: 12,
+                      onChanged: (value) {
+                        setState(() {
+                          maxLabels = value.round();
+                        });
+                      },
+                    ),
+
+                    // Toggles
+                    SwitchListTile(
+                      title: const Text('Labels inteligentes'),
+                      subtitle: Text(
+                        useSmartLabels
+                            ? 'Mostra apenas $maxLabels labels estrategicamente'
+                            : 'Mostra todos os labels (pode sobrepor)',
+                      ),
+                      value: useSmartLabels,
+                      onChanged: (value) {
+                        setState(() {
+                          useSmartLabels = value;
+                        });
+                      },
+                    ),
+
+                    SwitchListTile(
+                      title: const Text('Rotacionar labels'),
+                      subtitle: const Text('Economiza espaço horizontal'),
+                      value: rotateLabels,
+                      onChanged: (value) {
+                        setState(() {
+                          rotateLabels = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Chart
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(24),
+                child: CustomLineChart(
+                  key: ValueKey(
+                    '$dataPoints-$useSmartLabels-$rotateLabels-$maxLabels',
+                  ),
+                  dates: dates,
+                  yValues: values,
+
+                  // Smart label settings
+                  maxXLabels: useSmartLabels ? maxLabels : dataPoints,
+                  rotateLabels: rotateLabels,
+                  labelRotation: rotateLabels ? 0.785398 : 0, // 45 degrees
+                  // Auto grid for better visualization
+                  autoGridCount: true,
+                  maxGridCount: 8,
+                  minGridCount: 4,
+
+                  // Styling
+                  color: Colors.purple,
+                  lineWidth: 2,
+                  animationDuration: const Duration(milliseconds: 1000),
+                  showFilterButtons: false, // Focus on the data visualization
+                  // Grid styling
+                  gridLineOpacity: 0.1,
+                  labelTextStyle: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Info
+            Text(
+              useSmartLabels
+                  ? 'Exibindo $maxLabels de $dataPoints labels de forma inteligente'
+                  : 'Exibindo todos os $dataPoints labels (pode causar sobreposição)',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              rotateLabels
+                  ? 'Labels rotacionados em 45° para economizar espaço'
+                  : 'Labels na horizontal',
               style: const TextStyle(color: Colors.grey),
             ),
           ],

@@ -1,3 +1,56 @@
+## 1.0.3
+
+### Critical Bug Fix for Single Data Point Charts
+
+#### 🐛 Critical Bug Fix
+- **Fixed NaN Offset Error**: Resolved critical rendering issue where single data point charts caused NaN (Not a Number) values in canvas drawing
+- **Single Point Positioning**: Fixed calculation for centering single data points in chart area
+- **Division by Zero**: Prevented division by zero when calculating point spacing (dx) for single-point datasets
+
+#### 🎯 Improvements
+- Better error handling for edge cases in chart rendering
+- More robust calculations for single data point scenarios
+- Enhanced stability for charts with minimal data
+
+#### 🔧 Technical Details
+- Fixed `dx = chartWidth / (data.length - 1)` calculation when `data.length = 1`
+- Improved `_calculatePoints` function to handle single points correctly
+- Added proper centering logic for single data points
+
+---
+
+## 1.0.2
+
+### Smart X-Axis Labels for Large Datasets
+
+#### ✨ New Features
+- **Intelligent Label Display**: Automatically limits X-axis labels to prevent overcrowding
+- **Label Rotation**: Rotate labels when they overlap to save horizontal space
+- **Smart Label Selection**: Shows first, last, and evenly distributed labels for optimal readability
+
+#### 🔧 New Parameters
+- `maxXLabels`: Maximum number of X-axis labels to display (default: 8)
+- `rotateLabels`: Enable label rotation for space-saving (default: false)
+- `labelRotation`: Rotation angle for labels in radians (default: 45°)
+
+#### 🎯 Improvements
+- Better handling of large datasets (100+ data points)
+- Prevents X-axis label overlap and visual clutter
+- Maintains readability across different screen sizes
+- Optimized performance for charts with many data points
+
+#### 🐛 Bug Fixes
+- Fixed X-axis label overcrowding with large datasets
+- Improved label positioning for rotated text
+- Better canvas state management for label rendering
+
+#### 📚 Documentation
+- Added examples for large dataset handling
+- Updated parameter documentation
+- Enhanced usage examples for label customization
+
+---
+
 ## 1.0.1
 
 ### Enhanced Grid and Single Point Support
