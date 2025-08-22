@@ -1,3 +1,24 @@
+## 1.0.5
+
+### HotChart Parameter Cleanup
+
+#### 🐛 Bug Fixes
+- **Fixed Duplicate Parameters**: Removed duplicate color parameters (`goodColor`, `averageColor`, `badColor`) that were causing confusion
+- **Clean Constructor**: Cleaned up HotChart constructor to only include the correct parameters
+- **Improved IDE Support**: Fixed parameter recognition in external projects
+
+#### 🔧 Parameter Changes
+- **Removed**: `goodColor`, `averageColor`, `badColor` (deprecated)
+- **Kept**: `excellentColor`, `regularColor`, `poorColor` (current system)
+- **Consistency**: All parameters now follow the percentage-based status system
+
+#### 📝 Developer Experience
+- Better IntelliSense support in IDEs
+- Clear parameter documentation
+- No more parameter conflicts
+
+---
+
 ## 1.0.4
 
 ### New Widget: HotChart - Gauge Style Chart

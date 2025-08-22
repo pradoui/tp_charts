@@ -1,10 +1,10 @@
 name: tp_charts
 description: A collection of beautiful animated chart widgets for Flutter including line charts and gauge-style charts with customizable styling and smooth animations.
-version: 1.0.4
-homepage: https://github.com/yourusername/tp_charts
-repository: https://github.com/yourusername/tp_charts
-issue_tracker: https://github.com/yourusername/tp_charts/issues
-documentation: https://github.com/yourusername/tp_charts#readme
+version: 1.0.5
+homepage: https://github.com/pradoui/tp_charts
+repository: https://github.com/pradoui/tp_charts
+issue_tracker: https://github.com/pradoui/tp_charts/issues
+documentation: https://github.com/pradoui/tp_charts#readme
 
 environment:
   sdk: ^3.8.1

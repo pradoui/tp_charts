@@ -19,7 +19,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tp_charts: ^1.0.4
+  tp_charts: ^1.0.5
 ```
 
 ## Usage

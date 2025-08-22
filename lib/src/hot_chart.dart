@@ -18,15 +18,6 @@ class HotChart extends StatefulWidget {
   /// Width and height of the chart (it's always square)
   final double size;
 
-  /// Color when the value is good (close to ideal)
-  final Color goodColor;
-
-  /// Color when the value is average
-  final Color averageColor;
-
-  /// Color when the value is bad (far from ideal)
-  final Color badColor;
-
   /// Background color of the gauge
   final Color backgroundColor;
 
@@ -67,9 +58,6 @@ class HotChart extends StatefulWidget {
     this.minValue = 0.0,
     this.maxValue = 10.0,
     this.size = 200.0,
-    this.goodColor = const Color(0xFF10B981), // Green
-    this.averageColor = const Color(0xFFF59E0B), // Yellow/Orange
-    this.badColor = const Color(0xFFEF4444), // Red
     this.backgroundColor = Colors.white,
     this.trackColor = const Color(0xFFF3F4F6),
     this.valueTextStyle = const TextStyle(
