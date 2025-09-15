@@ -18,7 +18,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tp_charts: ^1.0.6
+  tp_charts: ^1.0.7
 ```
 
 Then run:
@@ -122,6 +122,20 @@ SimpleLineChart(
   rotateLabels: true,
 )
 ```
+
+## Visual Features
+
+### Smooth Animations & Visual Polish
+
+All charts feature beautiful visual elements:
+
+- **Smooth Cubic Curves**: Professional-looking smooth curves using cubic Bézier interpolation
+- **Gradient Fill**: Beautiful gradient background fill below chart lines
+- **Animated Rendering**: Smooth opacity animations for professional appearance
+- **Smart Tooltips**: Intelligent positioning that stays within widget bounds
+- **Responsive Design**: Adapts to different screen sizes and orientations
+
+Both `CustomLineChart` and `SimpleLineChart` share the same visual fidelity and smooth animation system for consistent user experience across your application.
 
 ## Examples
 

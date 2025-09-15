@@ -599,36 +599,52 @@ class _SimpleLineChartPainter extends CustomPainter {
   ) {
     if (points.length < 2) return;
 
+    final controls = _getCubicControlPoints(points);
+
     Path areaPath = Path();
     areaPath.moveTo(points.first.dx, topPadding + chartHeight);
+    areaPath.lineTo(points.first.dx, points.first.dy);
 
-    for (int i = 0; i < points.length; i++) {
-      if (i == 0) {
-        areaPath.lineTo(points[i].dx, points[i].dy);
-      } else {
-        // Create smooth curves between points
-        final prevPoint = points[i - 1];
-        final currentPoint = points[i];
-        final controlPointX = (prevPoint.dx + currentPoint.dx) / 2;
-
-        areaPath.quadraticBezierTo(
-          controlPointX,
-          prevPoint.dy,
-          currentPoint.dx,
-          currentPoint.dy,
-        );
+    if (points.length > 2) {
+      for (int i = 0; i < points.length - 1; i++) {
+        if (i * 2 + 1 < controls.length) {
+          Offset cp1 = controls[i * 2];
+          Offset cp2 = controls[i * 2 + 1];
+          Offset p1 = points[i + 1];
+          areaPath.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, p1.dx, p1.dy);
+        } else {
+          areaPath.lineTo(points[i + 1].dx, points[i + 1].dy);
+        }
       }
+    } else {
+      areaPath.lineTo(points.last.dx, points.last.dy);
     }
 
     areaPath.lineTo(points.last.dx, topPadding + chartHeight);
     areaPath.close();
 
-    // Apply gradient or solid color
+    // Create gradient dynamically based on the chart's color
     Paint areaPaint = Paint()
-      ..shader = gradient.createShader(
-        Rect.fromLTWH(0, topPadding, 0, chartHeight),
-      )
-      ..style = PaintingStyle.fill;
+      ..shader =
+          LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              color.withAlpha((0.35 * 255 * animationValue).round()),
+              color.withAlpha((0.10 * 255 * animationValue).round()),
+              Colors.transparent,
+            ],
+            stops: [0.0, 0.7, 1.0],
+          ).createShader(
+            Rect.fromLTWH(
+              0,
+              topPadding,
+              points.last.dx - points.first.dx,
+              chartHeight,
+            ),
+          )
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
     canvas.drawPath(areaPath, areaPaint);
   }
@@ -636,27 +652,32 @@ class _SimpleLineChartPainter extends CustomPainter {
   void _drawLine(Canvas canvas, List<Offset> points) {
     if (points.length < 2) return;
 
+    final controls = _getCubicControlPoints(points);
+
     Paint linePaint = Paint()
-      ..color = color
+      ..color = color.withOpacity(animationValue)
       ..strokeWidth = lineWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
+      ..strokeJoin = StrokeJoin.round
+      ..isAntiAlias = true;
 
     Path linePath = Path();
     linePath.moveTo(points.first.dx, points.first.dy);
 
-    for (int i = 1; i < points.length; i++) {
-      final prevPoint = points[i - 1];
-      final currentPoint = points[i];
-      final controlPointX = (prevPoint.dx + currentPoint.dx) / 2;
-
-      linePath.quadraticBezierTo(
-        controlPointX,
-        prevPoint.dy,
-        currentPoint.dx,
-        currentPoint.dy,
-      );
+    if (points.length > 2) {
+      for (int i = 0; i < points.length - 1; i++) {
+        if (i * 2 + 1 < controls.length) {
+          Offset cp1 = controls[i * 2];
+          Offset cp2 = controls[i * 2 + 1];
+          Offset p1 = points[i + 1];
+          linePath.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, p1.dx, p1.dy);
+        } else {
+          linePath.lineTo(points[i + 1].dx, points[i + 1].dy);
+        }
+      }
+    } else {
+      linePath.lineTo(points.last.dx, points.last.dy);
     }
 
     // Create animated path
@@ -922,6 +943,21 @@ class _SimpleLineChartPainter extends CustomPainter {
     // Sort indices
     indices.sort();
     return indices;
+  }
+
+  List<Offset> _getCubicControlPoints(List<Offset> pts) {
+    List<Offset> controls = [];
+    for (int i = 0; i < pts.length; i++) {
+      Offset p0 = i > 0 ? pts[i - 1] : pts[i];
+      Offset p1 = pts[i];
+      Offset p2 = i < pts.length - 1 ? pts[i + 1] : pts[i];
+      double dx1 = (p2.dx - p0.dx) / 6;
+      Offset cp1 = Offset(p1.dx + dx1, p1.dy);
+      Offset cp2 = Offset(p2.dx - dx1, p2.dy);
+      controls.add(cp1);
+      controls.add(cp2);
+    }
+    return controls;
   }
 
   @override

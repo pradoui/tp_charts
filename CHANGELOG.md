@@ -1,3 +1,20 @@
+## 1.0.7
+
+### Visual Fidelity & Polish Update
+
+#### 🎨 Visual Improvements
+- **SimpleLineChart Visual Fidelity**: Fixed visual inconsistencies with CustomLineChart
+- **Smooth Cubic Curves**: Implemented proper cubic Bézier curves matching CustomLineChart style
+- **Gradient Fill**: Added proper gradient background fill below the line
+- **Animation Opacity**: Added proper opacity animation for line rendering
+
+#### 🔧 Technical Improvements
+- **Cubic Control Points**: Replaced quadratic curves with cubic curves for smoother appearance
+- **Dynamic Gradient**: Implemented dynamic LinearGradient creation for consistent visual style
+- **Animation Integration**: Proper integration of animation values with rendering
+
+---
+
 ## 1.0.6
 
 ### SimpleLineChart Introduction & Major Improvements

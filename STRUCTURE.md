@@ -1,6 +1,6 @@
 # TP Charts - Project Structure
 
-A clean, organized Flutter package for beautiful animated charts.
+A clean, organized Flutter package for beautiful animated charts with professional visual fidelity.
 
 ## 📁 Project Structure
 
