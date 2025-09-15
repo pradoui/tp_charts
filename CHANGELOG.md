@@ -1,3 +1,31 @@
+## 1.0.6
+
+### SimpleLineChart Introduction & Major Improvements
+
+#### ✨ New Features
+- **SimpleLineChart**: New chart widget without built-in filter buttons for maximum flexibility
+- **External Date Filtering**: Filter data through `startDate` and `endDate` parameters
+- **Smart Tooltip Positioning**: Tooltips now stay within widget bounds automatically
+- **Improved Number Formatting**: Generic number formatting without assuming currency
+
+#### 🔧 Architecture
+- **Two Chart Options**: 
+  - `CustomLineChart`: With built-in filter buttons (existing)
+  - `SimpleLineChart`: External filtering only (new)
+- **Flexible Design**: Choose the right chart for your use case
+
+#### 🐛 Bug Fixes
+- **Tooltip Positioning**: Fixed tooltip breaking outside visual container
+- **Generic Values**: Removed automatic "R$" formatting for better reusability
+- **Animation Timers**: Fixed timer conflicts in test environments
+
+#### 📚 Documentation
+- **Comprehensive Examples**: Added example app demonstrating both chart types
+- **Clear Comparison**: Documentation explaining when to use each chart type
+- **Better README**: Restructured documentation for clarity
+
+---
+
 ## 1.0.5
 
 ### HotChart Parameter Cleanup

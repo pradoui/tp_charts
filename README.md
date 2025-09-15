@@ -1,17 +1,16 @@
 # TP Charts
 
-A collection of beautiful animated chart widgets for Flutter with customizable styling, smooth animations, and interactive effects.
+A beautiful animated chart widgets library for Flutter with customizable styling and smooth animations.
 
 ## Features
 
-- 📊 **Multiple Chart Types**: Line charts and gauge-style charts (HotChart)
-- 🎨 **Customizable Design**: Extensive styling options for colors, gradients, and typography
-- ✨ **Smooth Animations**: Beautiful entrance animations with customizable duration and curves
-- 🖱️ **Interactive**: Hover effects with tooltips showing data values
-- 📱 **Responsive**: Adapts to different screen sizes and orientations
-- 📅 **DateTime Support**: Automatic filtering by date periods (Today, This Week, This Year, All Period)
-- 🎛️ **Filter Buttons**: Built-in filter buttons for easy data selection
-- 🌐 **Cross-platform**: Works on all Flutter platforms
+- 📊 **CustomLineChart**: Line charts with built-in date filter buttons
+- 📈 **SimpleLineChart**: Line charts with external date filtering for maximum flexibility  
+- 🔥 **HotChart**: Gauge-style charts for displaying values with status indication
+- ✨ Interactive hover effects with tooltips
+- 🎨 Customizable colors, gradients, and styling
+- 📱 Responsive design
+- 🎯 Support for both DateTime and String data
 
 ## Installation
 
@@ -19,260 +18,123 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  tp_charts: ^1.0.5
+  tp_charts: ^1.0.6
 ```
 
-## Usage
+Then run:
 
-### HotChart - Gauge Style Chart
+```bash
+flutter pub get
+```
 
-The HotChart displays values in a speedometer/gauge style with status indication based on percentage ranges.
+## Quick Start
+
+### CustomLineChart (with built-in filters)
 
 ```dart
 import 'package:tp_charts/tp_charts.dart';
 
+CustomLineChart(
+  dates: [DateTime(2024, 1, 1), DateTime(2024, 1, 2), DateTime(2024, 1, 3)],
+  yValues: [100.0, 150.0, 120.0],
+  color: Colors.blue,
+  showFilterButtons: true, // Built-in date filters
+)
+```
+
+### SimpleLineChart (external filtering)
+
+```dart
+import 'package:tp_charts/tp_charts.dart';
+
+SimpleLineChart(
+  dates: [DateTime(2024, 1, 1), DateTime(2024, 1, 2), DateTime(2024, 1, 3)],
+  yValues: [100.0, 150.0, 120.0],
+  startDate: DateTime(2024, 1, 1), // External filter
+  endDate: DateTime(2024, 1, 2),   // External filter
+  color: Colors.green,
+)
+```
+
+### HotChart (gauge-style)
+
+```dart
 HotChart(
-  currentValue: 45.0,
+  currentValue: 4.85,
+  idealValue: 5.0,
   minValue: 0.0,
-  maxValue: 100.0,
-  size: 200,
-  showStatusText: true,
-  excellentStatusText: 'Ótimo',    // 0-30%
-  regularStatusText: 'Regular',    // 30-60%
-  poorStatusText: 'Ruim',          // 60%+
-  excellentColor: Colors.green,
-  regularColor: Colors.yellow,
-  poorColor: Colors.red,
+  maxValue: 10.0,
+  size: 200.0,
 )
 ```
 
-### CustomLineChart
+## Chart Types
 
-### DateTime-based Chart (Recommended)
+### CustomLineChart vs SimpleLineChart
 
-```dart
-import 'package:tp_charts/tp_charts.dart';
+| Feature | CustomLineChart | SimpleLineChart |
+|---------|----------------|-----------------|
+| Built-in filter buttons | ✅ Yes | ❌ No |
+| External date filtering | ✅ Yes | ✅ Yes |
+| Use case | Quick implementation | Maximum flexibility |
+| Customization | Standard | Full control |
 
-CustomLineChart(
-  dates: [
-    DateTime(2024, 1, 1),
-    DateTime(2024, 2, 1),
-    DateTime(2024, 3, 1),
-    DateTime(2024, 4, 1),
-  ],
-  yValues: [100.0, 150.0, 120.0, 180.0],
-)
-```
+**Use CustomLineChart when:**
+- You want a complete solution with built-in filters
+- Standard date filters (Today, This Week, This Year, All) meet your needs
 
-### String-based Chart (Legacy)
+**Use SimpleLineChart when:**
+- You need custom filter controls
+- The chart is part of a larger control system
+- You want maximum flexibility in UI design
 
-```dart
-CustomLineChart(
-  xValues: ['Jan', 'Feb', 'Mar', 'Apr'],
-  yValues: [100.0, 150.0, 120.0, 180.0],
-)
-```
+## Customization Options
 
-### Customized Chart with Filters
+Both chart types support extensive customization:
 
 ```dart
-CustomLineChart(
-  dates: myDateTimeList,
-  yValues: myValuesList,
+SimpleLineChart(
+  // Data
+  dates: myDates,
+  yValues: myValues,
   
   // Styling
   color: Colors.blue,
   lineWidth: 3.0,
-  pointRadius: 8.0,
+  pointRadius: 6.0,
+  gradient: LinearGradient(colors: [Colors.blue, Colors.lightBlue]),
+  
+  // Grid
+  gridLineColor: Colors.grey,
+  gridLineOpacity: 0.1,
+  gridCount: 5,
+  autoGridCount: true,
+  
+  // Tooltip
+  tooltipTextStyle: TextStyle(color: Colors.white, fontSize: 14),
+  tooltipBoxColor: Colors.black87,
   
   // Animation
   animationDuration: Duration(milliseconds: 1500),
   
-  // Filtering
-  showFilterButtons: true,
-  selectedFilter: FilterType.thisWeek,
-  onFilterChanged: (filter) {
-    print('Filter changed to: $filter');
-  },
-  
-  // Dynamic Grid (adapts to data size)
-  autoGridCount: true,
-  minGridCount: 3,
-  maxGridCount: 10,
-  
-  // Grid customization
-  gridLineColor: Colors.grey,
-  gridLineOpacity: 0.1,
-  
-  // Tooltip customization
-  tooltipTextStyle: TextStyle(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    fontSize: 14,
-  ),
-  tooltipBoxColor: Colors.black87,
+  // Labels
+  maxXLabels: 8,
+  rotateLabels: true,
 )
 ```
 
-### Chart with Large Dataset
+## Examples
 
-```dart
-CustomLineChart(
-  dates: myLargeDateTimeList, // e.g., 100+ items
-  yValues: myLargeValuesList,
-  
-  // Handle large datasets with smart labeling
-  maxXLabels: 6, // Show only 6 X-axis labels max
-  rotateLabels: true, // Rotate labels to save space
-  labelRotation: 0.785398, // 45 degrees
-  
-  // Dynamic grid
-  autoGridCount: true,
-  maxGridCount: 8,
-  
-  color: Colors.purple,
-)
+Run the example app to see all chart types in action:
+
+```bash
+cd example
+flutter run
 ```
 
-### Standalone Filter Buttons
+## Documentation
 
-```dart
-ChartFilterButton(
-  label: 'This Week',
-  selected: isSelected,
-  onTap: () => onFilterSelected(),
-  selectedBackgroundColor: Colors.blue,
-  selectedTextColor: Colors.white,
-  unselectedBackgroundColor: Colors.grey[100],
-  unselectedTextColor: Colors.grey[600],
-)
-```
-
-## Parameters
-
-### CustomLineChart
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `dates` | `List<DateTime>?` | `null` | DateTime objects for X-axis (preferred for automatic filtering) |
-| `xValues` | `List<String>?` | `null` | String labels for X-axis (alternative to dates) |
-| `yValues` | `List<double>` | **required** | Numeric values for the Y-axis |
-| `color` | `Color` | `Color(0xFF3B82F6)` | Primary color for line and area |
-| `lineWidth` | `double` | `3.0` | Width of the line stroke |
-| `pointRadius` | `double` | `7.0` | Radius of hover points |
-| `animationDuration` | `Duration` | `Duration(milliseconds: 1500)` | Duration of entrance animation |
-| `showFilterButtons` | `bool` | `true` | Whether to show built-in filter buttons |
-| `selectedFilter` | `FilterType` | `FilterType.allPeriod` | Currently selected filter |
-| `onFilterChanged` | `Function(FilterType)?` | `null` | Callback when filter changes |
-| `gridLineColor` | `Color` | `Colors.grey` | Color of grid lines |
-| `gridLineOpacity` | `double` | `0.05` | Opacity of grid lines (0.0 to 1.0) |
-| `gridCount` | `int` | `5` | Number of horizontal grid lines (when autoGridCount is false) |
-| `autoGridCount` | `bool` | `false` | Whether to automatically adjust grid count based on data |
-| `maxGridCount` | `int` | `10` | Maximum grid lines when using auto grid count |
-| `minGridCount` | `int` | `3` | Minimum grid lines when using auto grid count |
-| `maxXLabels` | `int` | `8` | Maximum number of X-axis labels to display |
-| `rotateLabels` | `bool` | `false` | Whether to rotate X-axis labels when they overlap |
-| `labelRotation` | `double` | `0.785398` | Rotation angle for labels in radians (45° default) |
-| `tooltipTextStyle` | `TextStyle` | - | Style for tooltip text |
-| `labelTextStyle` | `TextStyle` | - | Style for axis labels |
-| `tooltipBoxColor` | `Color` | `Colors.black` | Background color of tooltip |
-
-### HotChart
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `currentValue` | `double` | **required** | The current value to display |
-| `minValue` | `double` | `0.0` | Minimum value for the gauge scale |
-| `maxValue` | `double` | `10.0` | Maximum value for the gauge scale |
-| `size` | `double` | `200.0` | Width and height of the chart (always square) |
-| `excellentStatusText` | `String` | `'Excellent'` | Text for excellent status (0-30%) |
-| `regularStatusText` | `String` | `'Regular'` | Text for regular status (30-60%) |
-| `poorStatusText` | `String` | `'Poor'` | Text for poor status (60%+) |
-| `excellentColor` | `Color` | `Colors.green` | Color for excellent status |
-| `regularColor` | `Color` | `Colors.yellow` | Color for regular status |
-| `poorColor` | `Color` | `Colors.red` | Color for poor status |
-| `trackColor` | `Color` | `Colors.grey[300]` | Color of the background track |
-| `trackWidth` | `double` | `20.0` | Width of the gauge track |
-| `showStatusText` | `bool` | `true` | Whether to show status text below value |
-| `animate` | `bool` | `true` | Whether to animate chart entrance |
-| `animationDuration` | `Duration` | `Duration(milliseconds: 1000)` | Duration of entrance animation |
-| `valueTextStyle` | `TextStyle` | - | Style for the center value text |
-| `statusTextStyle` | `TextStyle` | - | Style for the status text |
-
-### FilterType Enum
-
-- `FilterType.today` - Shows data from today only
-- `FilterType.thisWeek` - Shows data from the last 7 days
-- `FilterType.thisYear` - Shows data from the current year
-- `FilterType.allPeriod` - Shows all available data
-
-### ChartFilterButton
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `label` | `String` | **required** | Text displayed on button |
-| `selected` | `bool` | **required** | Whether button is selected |
-| `onTap` | `VoidCallback?` | `null` | Callback when button is tapped |
-| `selectedBackgroundColor` | `Color?` | `Colors.blue` | Background color when selected |
-| `selectedTextColor` | `Color?` | `Colors.white` | Text color when selected |
-| `unselectedBackgroundColor` | `Color?` | `Colors.white` | Background color when not selected |
-| `unselectedTextColor` | `Color?` | `Colors.grey[700]` | Text color when not selected |
-| `animationDuration` | `Duration` | `Duration(milliseconds: 200)` | Animation duration |
-| `borderRadius` | `double` | `16.0` | Border radius of button |
-
-## Complete Example
-
-Check out the complete example in the `/example` folder:
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:tp_charts/tp_charts.dart';
-
-class MyChart extends StatefulWidget {
-  @override
-  _MyChartState createState() => _MyChartState();
-}
-
-class _MyChartState extends State<MyChart> {
-  FilterType selectedFilter = FilterType.allPeriod;
-
-  @override
-  Widget build(BuildContext context) {
-    final dates = [
-      DateTime(2024, 8, 1),
-      DateTime(2024, 8, 5),
-      DateTime(2024, 8, 10),
-      DateTime(2024, 8, 15),
-      DateTime(2024, 8, 20),
-    ];
-    
-    final values = [1200.0, 1900.0, 1600.0, 2100.0, 2400.0];
-
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: CustomLineChart(
-          dates: dates,
-          yValues: values,
-          color: Colors.blue,
-          lineWidth: 3.0,
-          selectedFilter: selectedFilter,
-          onFilterChanged: (filter) {
-            setState(() {
-              selectedFilter = filter;
-            });
-          },
-        ),
-      ),
-    );
-  }
-}
-```
-
-## Requirements
-
-- Flutter >= 3.0.0
-- Dart >= 3.8.1
+For detailed documentation and advanced usage, see the API documentation.
 
 ## Contributing
 
@@ -280,4 +142,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
