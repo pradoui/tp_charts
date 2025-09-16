@@ -24,6 +24,7 @@ class ExamplePage extends StatefulWidget {
 class _ExamplePageState extends State<ExamplePage> {
   DateTime? _startDate;
   DateTime? _endDate;
+  PeriodType _periodType = PeriodType.custom;
 
   // Sample data
   final List<DateTime> _dates = List.generate(30, (index) {
@@ -128,18 +129,25 @@ class _ExamplePageState extends State<ExamplePage> {
                       Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () => _setDaysFilter(7),
-                            child: Text('7 days'),
+                            onPressed: () => _setDaysFilter(7, PeriodType.week),
+                            child: Text('Semana'),
                           ),
                           SizedBox(width: 8),
                           ElevatedButton(
-                            onPressed: () => _setDaysFilter(15),
-                            child: Text('15 days'),
+                            onPressed: () =>
+                                _setDaysFilter(30, PeriodType.month),
+                            child: Text('Mês'),
+                          ),
+                          SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: () =>
+                                _setDaysFilter(365, PeriodType.year),
+                            child: Text('Ano'),
                           ),
                           SizedBox(width: 8),
                           ElevatedButton(
                             onPressed: _clearFilters,
-                            child: Text('All'),
+                            child: Text('Todos'),
                           ),
                         ],
                       ),
@@ -151,6 +159,7 @@ class _ExamplePageState extends State<ExamplePage> {
                           yValues: _values,
                           startDate: _startDate,
                           endDate: _endDate,
+                          periodType: _periodType,
                           color: Colors.green,
                         ),
                       ),
@@ -165,11 +174,12 @@ class _ExamplePageState extends State<ExamplePage> {
     );
   }
 
-  void _setDaysFilter(int days) {
+  void _setDaysFilter(int days, PeriodType periodType) {
     final now = DateTime.now();
     setState(() {
       _startDate = now.subtract(Duration(days: days - 1));
       _endDate = now;
+      _periodType = periodType;
     });
   }
 
@@ -177,6 +187,7 @@ class _ExamplePageState extends State<ExamplePage> {
     setState(() {
       _startDate = null;
       _endDate = null;
+      _periodType = PeriodType.custom;
     });
   }
 }

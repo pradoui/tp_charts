@@ -52,6 +52,7 @@ SimpleLineChart(
   yValues: [100.0, 150.0, 120.0],
   startDate: DateTime(2024, 1, 1), // External filter
   endDate: DateTime(2024, 1, 2),   // External filter
+  periodType: PeriodType.week,     // NEW: Smart label formatting
   color: Colors.green,
 )
 ```
@@ -87,6 +88,51 @@ HotChart(
 - You need custom filter controls
 - The chart is part of a larger control system
 - You want maximum flexibility in UI design
+
+## 🆕 Smart Date Label Formatting (v1.1.0)
+
+SimpleLineChart now includes intelligent date label formatting based on the period type:
+
+### PeriodType Options
+
+```dart
+enum PeriodType { hour, day, week, month, year, custom }
+```
+
+### Usage Examples
+
+```dart
+// Week view - shows weekday abbreviations
+SimpleLineChart(
+  dates: weekData,
+  yValues: weekValues,
+  periodType: PeriodType.week, // "Seg", "Ter", "Qua"...
+)
+
+// Month view - shows dates
+SimpleLineChart(
+  periodType: PeriodType.month, // "15/09", "16/09", "17/09"...
+)
+
+// Year view - shows months
+SimpleLineChart(
+  periodType: PeriodType.year, // "Jan", "Fev", "Mar"...
+)
+
+// Auto-detect (default) - intelligent formatting
+SimpleLineChart(
+  periodType: PeriodType.custom, // Smart auto-detection
+)
+```
+
+| PeriodType | Label Format | Example Output |
+|------------|-------------|----------------|
+| `hour` | HH:mm | "14:30", "15:45" |
+| `day` | dd/MM | "15/09", "16/09" |
+| `week` | Weekday | "Seg", "Ter", "Qua" |
+| `month` | dd/MM | "01/09", "05/09", "10/09" |
+| `year` | MMM | "Jan", "Fev", "Mar" |
+| `custom` | Auto-detect | Intelligent based on data range |
 
 ## Customization Options
 

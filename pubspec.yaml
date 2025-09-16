@@ -1,6 +1,6 @@
 name: tp_charts
 description: Beautiful animated chart widgets for Flutter with customizable styling. Includes CustomLineChart (with built-in filters), SimpleLineChart (external filtering), and HotChart (gauge-style).
-version: 1.0.7
+version: 1.1.0
 homepage: https://github.com/pradoui/tp_charts
 repository: https://github.com/pradoui/tp_charts
 issue_tracker: https://github.com/pradoui/tp_charts/issues

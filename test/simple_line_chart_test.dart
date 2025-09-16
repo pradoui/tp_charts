@@ -205,5 +205,68 @@ void main() {
         throwsAssertionError,
       );
     });
+
+    testWidgets('SimpleLineChart should render with different PeriodTypes', (
+      WidgetTester tester,
+    ) async {
+      final dates = [
+        DateTime(2024, 1, 1),
+        DateTime(2024, 1, 2),
+        DateTime(2024, 1, 3),
+      ];
+      final values = [100.0, 120.0, 80.0];
+
+      // Test all PeriodType values
+      for (final periodType in PeriodType.values) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                height: 300,
+                child: SimpleLineChart(
+                  dates: dates,
+                  yValues: values,
+                  periodType: periodType,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+
+        // Verify the chart renders without errors
+        expect(find.byType(SimpleLineChart), findsOneWidget);
+      }
+    });
+
+    testWidgets('SimpleLineChart should use custom as default periodType', (
+      WidgetTester tester,
+    ) async {
+      final dates = [DateTime(2024, 1, 1), DateTime(2024, 1, 2)];
+      final values = [100.0, 120.0];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              height: 300,
+              child: SimpleLineChart(
+                dates: dates,
+                yValues: values,
+                // periodType not specified - should default to custom
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify the chart renders without errors
+      expect(find.byType(SimpleLineChart), findsOneWidget);
+    });
   });
 }

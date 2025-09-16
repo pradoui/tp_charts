@@ -10,6 +10,7 @@
 /// - Interactive hover effects with tooltips
 /// - Automatic date-based filtering (Today, This Week, This Year, All Period) in CustomLineChart
 /// - External date filtering through startDate/endDate parameters in SimpleLineChart
+/// - **NEW v1.1.0**: Smart date label formatting with PeriodType enum in SimpleLineChart
 /// - Support for both DateTime and String data
 /// - Customizable colors, gradients, and styling
 /// - Grid lines and axis labels
@@ -38,9 +39,25 @@
 ///   yValues: [100.0, 150.0, 120.0, 180.0],
 ///   startDate: DateTime(2024, 1, 1),
 ///   endDate: DateTime(2024, 1, 5),
+///   periodType: PeriodType.week, // NEW: Smart label formatting
 ///   color: Colors.blue,
 ///   lineWidth: 3.0,
 /// )
+/// ```
+///
+/// ### SimpleLineChart with PeriodType options (v1.1.0+)
+/// ```dart
+/// // Week view - shows weekday abbreviations
+/// SimpleLineChart(periodType: PeriodType.week)   // "Seg", "Ter", "Qua"
+///
+/// // Month view - shows dates
+/// SimpleLineChart(periodType: PeriodType.month)  // "15/09", "16/09"
+///
+/// // Year view - shows months
+/// SimpleLineChart(periodType: PeriodType.year)   // "Jan", "Fev", "Mar"
+///
+/// // Auto-detect (default)
+/// SimpleLineChart(periodType: PeriodType.custom) // Intelligent formatting
 /// ```
 ///
 /// ### CustomLineChart with String labels (legacy mode)

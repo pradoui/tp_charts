@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
+/// Period types for date formatting
+enum PeriodType { hour, day, week, month, year, custom }
+
 /// A customizable animated line chart widget for Flutter without filter buttons
 ///
 /// This widget displays data as a smooth line chart with various customization options
@@ -24,6 +27,9 @@ class SimpleLineChart extends StatefulWidget {
 
   /// End date for filtering data (optional)
   final DateTime? endDate;
+
+  /// Type of period for date label formatting
+  final PeriodType periodType;
 
   /// Primary color for the line and area fill
   final Color color;
@@ -111,6 +117,7 @@ class SimpleLineChart extends StatefulWidget {
     required this.yValues,
     this.startDate,
     this.endDate,
+    this.periodType = PeriodType.custom,
     this.color = const Color(0xFF3B82F6),
     this.gradient = const LinearGradient(
       colors: [Color(0xFF3B82F6), Color(0xFF60A5FA)],
@@ -290,34 +297,71 @@ class _SimpleLineChartState extends State<SimpleLineChart>
       }
     }
 
-    // Format labels based on date range
+    // Format labels based on period type
     if (filteredDates.isNotEmpty) {
-      if (filteredDates.length > 1) {
-        final span = filteredDates.last.difference(filteredDates.first).inDays;
-        if (span <= 1) {
-          // Same day - show hours
+      switch (widget.periodType) {
+        case PeriodType.hour:
           formattedLabels = filteredDates
               .map((d) => DateFormat('HH:mm').format(d))
               .toList();
-        } else if (span <= 31) {
-          // Within a month - show days
+          break;
+        case PeriodType.day:
           formattedLabels = filteredDates
               .map((d) => DateFormat('dd/MM').format(d))
               .toList();
-        } else {
-          // Longer period - show months
+          break;
+        case PeriodType.week:
           formattedLabels = filteredDates
-              .map((d) => DateFormat('MMM/yy').format(d))
+              .map((d) => _getWeekdayAbbr(d))
               .toList();
-        }
-      } else {
-        formattedLabels = filteredDates
-            .map((d) => DateFormat('dd/MM').format(d))
-            .toList();
+          break;
+        case PeriodType.month:
+          formattedLabels = filteredDates
+              .map((d) => DateFormat('dd/MM').format(d))
+              .toList();
+          break;
+        case PeriodType.year:
+          formattedLabels = filteredDates
+              .map((d) => DateFormat('MMM').format(d))
+              .toList();
+          break;
+        case PeriodType.custom:
+          // Auto-detect format based on date range
+          if (filteredDates.length > 1) {
+            final span = filteredDates.last
+                .difference(filteredDates.first)
+                .inDays;
+            if (span <= 1) {
+              // Same day - show date only (no hours)
+              formattedLabels = filteredDates
+                  .map((d) => DateFormat('dd/MM').format(d))
+                  .toList();
+            } else if (span <= 31) {
+              // Within a month - show days
+              formattedLabels = filteredDates
+                  .map((d) => DateFormat('dd/MM').format(d))
+                  .toList();
+            } else {
+              // Longer period - show months
+              formattedLabels = filteredDates
+                  .map((d) => DateFormat('MMM/yy').format(d))
+                  .toList();
+            }
+          } else {
+            formattedLabels = filteredDates
+                .map((d) => DateFormat('dd/MM').format(d))
+                .toList();
+          }
+          break;
       }
     }
 
     return {'xValues': formattedLabels, 'yValues': filteredValues};
+  }
+
+  String _getWeekdayAbbr(DateTime date) {
+    const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    return weekdays[date.weekday % 7];
   }
 
   @override

@@ -1,3 +1,53 @@
+## 1.1.0
+
+### 🎯 Major Date Label Formatting Improvement
+
+#### 🚀 New Features
+- **PeriodType Enum**: Added `PeriodType` enum with values: `hour`, `day`, `week`, `month`, `year`, `custom`
+- **Smart Period-Based Formatting**: SimpleLineChart now formats date labels appropriately based on the period type
+- **Explicit Period Control**: New `periodType` parameter in SimpleLineChart for precise label formatting control
+
+#### 🐛 Bug Fixes
+- **Fixed Inappropriate Hour Display**: Resolved issue where hour labels (`HH:mm`) were shown even when filtering by week, month, or year
+- **Intelligent Auto-Detection**: Improved `PeriodType.custom` logic to never show hours for inappropriate periods
+
+#### 📊 Label Formatting Logic
+- **Week Filter** (`PeriodType.week`): Shows weekday abbreviations ("Seg", "Ter", "Qua"...)
+- **Month Filter** (`PeriodType.month`): Shows dates in dd/MM format ("15/09", "16/09"...)
+- **Year Filter** (`PeriodType.year`): Shows month abbreviations ("Jan", "Fev", "Mar"...)
+- **Custom/Auto** (`PeriodType.custom`): Intelligent detection, but never shows hours for short periods
+
+#### 🔄 Backward Compatibility
+- **Default Behavior**: Uses `PeriodType.custom` by default, maintaining existing API compatibility
+- **Enhanced Logic**: Existing code works better with improved auto-detection that avoids inappropriate hour labels
+
+#### 📝 Example Usage
+```dart
+// Week view - shows weekdays
+SimpleLineChart(
+  dates: dates,
+  yValues: values,
+  periodType: PeriodType.week,
+)
+
+// Month view - shows dates
+SimpleLineChart(
+  periodType: PeriodType.month,
+)
+
+// Year view - shows months
+SimpleLineChart(
+  periodType: PeriodType.year,
+)
+
+// Auto-detect (default) - improved logic
+SimpleLineChart(
+  // periodType: PeriodType.custom (default)
+)
+```
+
+---
+
 ## 1.0.7
 
 ### Visual Fidelity & Polish Update
